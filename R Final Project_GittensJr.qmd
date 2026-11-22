@@ -1,0 +1,207 @@
+---
+title: "The Final Project For ArcGis Class"
+subtitle: "Analysis of 2021 NOAA NCRMP Coral Demographics Data"
+author: "Samuel Gittens Jr."
+format:
+  html:
+    code-fold: true
+    code-summary: "Show R Code"
+
+execute:
+  echo: true
+  warning: true
+  message: true
+  cache: false
+  freeze: false
+
+---
+
+## Introduction
+
+Coral reefs are important marine ecosystems that provide habitat for diverse marine species and support fisheries, tourism, and coastal protection throughout the U.S. Virgin Islands (USVI). Monitoring coral communities is essential for understanding species composition, identifying potential changes in reef health, and supporting conservation efforts.
+
+This project uses coral demographics data collected in 2021 through the National Oceanic and Atmospheric Administration's (NOAA) National Coral Reef Monitoring Program (NCRMP). The analysis focuses on coral species observations across St. Croix (STX) and St. Thomas–St. John (STT/STJ). Using R, the dataset is cleaned, summarized, and visualized to examine the most frequently recorded coral species and compare observations between regions. Geographic information system (GIS) mapping will also be used to visualize the spatial distribution of survey observations.
+
+## Data Preparation
+
+The original 2021 NCRMP coral demographics dataset contained 18,778 records and 37 variables. The dataset was imported into R and processed using functions from the tidyverse package collection. Records were filtered to retain observations where `N = 1`, resulting in 8,705 coral colony records for analysis.
+
+Of these records, 4,201 were from St. Croix (STX) and 4,504 were from St. Thomas–St. John (STT/STJ).
+
+```{r}
+
+#| label: load-data
+#| echo: false
+#| message: false
+#| warning: false
+
+suppressWarnings(
+  suppressPackageStartupMessages(
+    library(tidyverse)
+  )
+)
+
+coral_data <- read_csv(
+  "data/NCRMP_USVI2021_Benthic_Data02_CoralDemographics.csv",
+  show_col_types = FALSE
+)
+
+```
+
+```{r}
+#| label: clean-coral-data
+#| echo: true
+#| code-fold: true
+
+coral_clean <- coral_data %>%
+  filter(N == 1)
+```
+
+## Top 10 Coral Species in the USVI
+
+```{r fig-top-coral-species}
+#| fig-cap: "Most frequently recorded coral species during the 2021 NOAA NCRMP surveys."
+#| echo: true
+#| code-fold: true
+#| fig-width: 12
+#| fig-height: 6
+
+
+top_species <- coral_clean %>%
+  filter(!is.na(SPECIES_NAME)) %>%
+  count(SPECIES_NAME, sort = TRUE) %>%
+  slice_head(n = 10)
+
+coral_plot <- ggplot(top_species,
+       aes(x = reorder(SPECIES_NAME, -n),
+           y = n,
+           fill = SPECIES_NAME)) +
+  geom_col() +
+  scale_fill_brewer(palette = "Paired") +
+  labs(
+    title = "Top 10 Coral Species in the USVI (2021)",
+    x = "Coral Species",
+    y = "Number of Recorded Colonies"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(
+      size = 14,
+      face = "bold",
+      hjust = 0.5
+    ),
+    axis.text.x = element_text(
+      size = 14,
+      angle = 45,
+      hjust = 1,
+      face = "italic"
+    ),
+    axis.text.y = element_text(size = 14),
+    axis.title.x = element_text(
+      size = 14,
+      margin = margin(t = 10)
+    ),
+    axis.title.y = element_text(size = 10),
+    panel.border = element_rect(
+      color = "black",
+      fill = NA,
+      linewidth = 0.6
+    ),
+    plot.margin = margin(15, 20, 15, 35),
+    legend.position = "none"
+  )
+
+print(coral_plot)
+```
+
+The 2021 NCRMP coral demographics dataset revealed that *Porites astreoides* was the most frequently recorded coral species across the U.S. Virgin Islands, followed by *Siderastrea siderea* and *Agaricia agaricites*. The differences in recorded colony counts highlight variation in species representation within the surveyed coral communities. However, these observations reflect the NCRMP sampling effort and should not be interpreted as estimates of total coral abundance throughout the USVI.
+
+
+## Regional Comparison of Coral Species 
+
+To examine regional differences in coral species observations, the ten most frequently recorded coral species across the USVI were compared between St. Croix (STX) and St. Thomas–St. John (STTSTJ). This comparison provides an overview of how recorded colony counts vary between the two regions during the 2021 NCRMP surveys.
+
+```{r}
+
+
+#| label: regional-coral-summary
+#| echo: true
+#| code-fold: true
+
+species_region <- coral_clean %>%
+  filter(SPECIES_NAME %in% top_species$SPECIES_NAME) %>%
+  count(REGION, SPECIES_NAME, name = "colonies") %>%
+  mutate(
+    SPECIES_NAME = factor(
+      SPECIES_NAME,
+      levels = top_species$SPECIES_NAME
+    )
+  )
+
+```
+
+
+```{r fig-regional-coral}
+#| fig-cap: "Comparison of recorded coral colonies between St. Croix and St. Thomas–St. John during the 2021 NOAA NCRMP surveys."
+#| echo: true
+#| code-fold: true
+#| fig-width: 12
+#| fig-height: 6
+
+ggplot(species_region,
+       aes(x = SPECIES_NAME,
+           y = colonies,
+           fill = REGION)) +
+  geom_col(position = "dodge") +
+  scale_fill_manual(
+    values = c("STX" = "steelblue",
+               "STTSTJ" = "coral"),
+    labels = c("STTSTJ" = "St. Thomas–St. John",
+               "STX" = "St. Croix")
+  ) +
+  labs(
+    title = "Top 10 Coral Species by Region (2021)",
+    x = "Coral Species",
+    y = "Number of Recorded Colonies",
+    fill = "Region"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 12, face = "bold", hjust = 0.5),
+    axis.text.x = element_text(size = 8, angle = 45,
+                               hjust = 1, face = "italic"),
+    axis.text.y = element_text(size = 9),
+    axis.title.x = element_text(size = 9),
+    axis.title.y = element_text(size = 10),
+    panel.border = element_rect(
+      color = "black",
+      fill = NA,
+      linewidth = 0.6
+    ),
+    legend.position = "top"
+  )
+```
+
+The regional comparison of the ten most frequently recorded coral species revealed differences in colony observations between St. Croix (STX) and St. Thomas–St. John (STTSTJ). *Porites astreoides* was the most frequently recorded species in both regions, with similar colony counts. Species such as *Siderastrea siderea* and *Orbicella franksi* had higher recorded colony counts in STTSTJ, while *Stephanocoenia intersepta* and *Agaricia humilis* were recorded more frequently in STX. These differences highlight variation in species representation between the surveyed regions. However, recorded colony counts may be influenced by differences in sampling effort and should not be interpreted as direct estimates of regional coral abundance.
+
+
+## Spatial Distribution of Coral Survey Locations
+
+To examine the geographic distribution of coral survey observations, a map was created using ArcGIS Pro and the 2021 NOAA NCRMP coral demographics dataset. A total of 262 unique survey locations were identified across St. Croix and St. Thomas–St. John. The map illustrates the spatial distribution of these survey locations throughout the U.S. Virgin Islands.
+
+
+
+![Spatial distribution of 2021 NOAA NCRMP coral survey locations in the U.S. Virgin Islands.](images/Coral%20Survey%20Locations%20Layout.png){#fig-coral-map fig-align="center" width="100%"}
+
+## Conclusion
+
+The analysis of the 2021 NOAA NCRMP coral demographics dataset provided an overview of coral species observations across the U.S. Virgin Islands. *Porites astreoides* was the most frequently recorded coral species, followed by *Siderastrea siderea* and *Agaricia agaricites*. Regional comparisons revealed differences in recorded colony counts between St. Croix and St. Thomas–St. John, highlighting variation in coral species representation across the surveyed locations.
+
+This ArcGIS map illustrated the geographic distribution of 262 unique coral survey locations throughout the USVI. Together, the R visualizations and GIS map demonstrate how statistical analysis and spatial mapping can be used to examine coral monitoring data. Although the results reflect the NCRMP sampling effort rather than total coral abundance, they provide useful insight into the coral communities represented in the 2021 surveys.
+
+## Data Source and References
+
+**National Oceanic and Atmospheric Administration (NOAA).** (2021). *National Coral Reef Monitoring Program (NCRMP): U.S. Virgin Islands Coral Demographics Data.*
+
+The 2021 NCRMP coral demographics dataset was used for data cleaning, species comparisons, and spatial analysis in R and ArcGIS Pro.
+
