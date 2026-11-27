@@ -1,6 +1,6 @@
 ---
 title: "The Final Project For ArcGis Class"
-subtitle: "Analysis of 2021 NOAA NCRMP Coral Demographics Data"
+subtitle: "An Analysis of 2021 NOAA NCRMP Coral Demographics Data"
 author: "Samuel Gittens Jr."
 format:
   html:
@@ -18,15 +18,15 @@ execute:
 
 ## Introduction
 
-Coral reefs are important marine ecosystems that provide habitat for diverse marine species and support fisheries, tourism, and coastal protection throughout the U.S. Virgin Islands (USVI). Monitoring coral communities is essential for understanding species composition, identifying potential changes in reef health, and supporting conservation efforts.
+Coral reefs are important marine ecosystems that support marine biodiversity and provide valuable ecosystem services, including fisheries, tourism, and coastal protection throughout the Caribbean (Lester et al., 2020). Monitoring coral communities is essential for understanding species composition, identifying changes in reef health, and supporting conservation efforts (Miller et al., 2009; Tsounis & Edmunds, 2017).
 
-This project uses coral demographics data collected in 2021 through the National Oceanic and Atmospheric Administration's (NOAA) National Coral Reef Monitoring Program (NCRMP). The analysis focuses on coral species observations across St. Croix (STX) and St. Thomas–St. John (STT/STJ). Using R, the dataset is cleaned, summarized, and visualized to examine the most frequently recorded coral species and compare observations between regions. Geographic information system (GIS) mapping will also be used to visualize the spatial distribution of survey observations.
+This final project uses coral demographics data collected in 2021 through the National Oceanic and Atmospheric Administration's (NOAA) National Coral Reef Monitoring Program (NCRMP) (NCCOS & SEFSC, 2022). My analysis focuses on coral species observations across St. Croix (STX) and St. Thomas–St. John (STT-STJ) in the U.S. Virgin Islands (USVI). Using R, the coral dataset is cleaned, summarized, and visualized to examine the most frequently recorded coral species and compare observations between regions. Geographic information system (GIS) mapping is also used to visualize the spatial distribution of coral survey locations.
 
 ## Data Preparation
 
-The original 2021 NCRMP coral demographics dataset contained 18,778 records and 37 variables. The dataset was imported into R and processed using functions from the tidyverse package collection. Records were filtered to retain observations where `N = 1`, resulting in 8,705 coral colony records for analysis.
+The original 2021 NCRMP coral demographics dataset contained 18,778 records and 37 variables (NCCOS & SEFSC, 2022). The dataset was imported into R and processed using functions from the tidyverse package. Data was filtered to retain observations where N = 1, resulting in 8,705 coral colony records for analysis.
 
-Of these records, 4,201 were from St. Croix (STX) and 4,504 were from St. Thomas–St. John (STT/STJ).
+Of these records, 4,201 were from St. Croix (STX) and 4,504 were from St. Thomas–St. John (STT-STJ).
 
 ```{r}
 
@@ -114,12 +114,12 @@ coral_plot <- ggplot(top_species,
 print(coral_plot)
 ```
 
-The 2021 NCRMP coral demographics dataset revealed that *Porites astreoides* was the most frequently recorded coral species across the U.S. Virgin Islands, followed by *Siderastrea siderea* and *Agaricia agaricites*. The differences in recorded colony counts highlight variation in species representation within the surveyed coral communities. However, these observations reflect the NCRMP sampling effort and should not be interpreted as estimates of total coral abundance throughout the USVI.
+The 2021 NCRMP coral demographics dataset revealed that *Porites astreoides* was the most frequently recorded coral species across the U.S. Virgin Islands, followed by *Siderastrea siderea* and *Agaricia agaricites*. Differences in recorded colony counts highlight variation in species representation within the surveyed coral communities. However, these observations reflect the NCRMP sampling effort and should not be interpreted as estimates of total coral abundance throughout the USVI.
 
 
 ## Regional Comparison of Coral Species 
 
-To examine regional differences in coral species observations, the ten most frequently recorded coral species across the USVI were compared between St. Croix (STX) and St. Thomas–St. John (STTSTJ). This comparison provides an overview of how recorded colony counts vary between the two regions during the 2021 NCRMP surveys.
+To examine regional differences in coral species observations, the ten most frequently recorded coral species across the USVI were compared between St. Croix (STX) and St. Thomas–St. John (STT-STJ). This comparison provides an overview of how recorded colony counts vary between the two regions during the 2021 NCRMP surveys.
 
 ```{r}
 
@@ -182,7 +182,7 @@ ggplot(species_region,
   )
 ```
 
-The regional comparison of the ten most frequently recorded coral species revealed differences in colony observations between St. Croix (STX) and St. Thomas–St. John (STTSTJ). *Porites astreoides* was the most frequently recorded species in both regions, with similar colony counts. Species such as *Siderastrea siderea* and *Orbicella franksi* had higher recorded colony counts in STTSTJ, while *Stephanocoenia intersepta* and *Agaricia humilis* were recorded more frequently in STX. These differences highlight variation in species representation between the surveyed regions. However, recorded colony counts may be influenced by differences in sampling effort and should not be interpreted as direct estimates of regional coral abundance.
+The regional comparison of the ten most frequently recorded coral species revealed differences in colony observations between St. Croix (STX) and St. Thomas–St. John (STTSTJ). *Porites astreoides* was the most frequently recorded species in both regions, with similar colony counts. Species such as *Siderastrea siderea* and *Orbicella franksi* had higher recorded colony counts in STT-STJ, while *Stephanocoenia intersepta* and *Agaricia humilis* were recorded more frequently in STX. These differences highlight variation in species representation between the surveyed regions. However, recorded colony counts may be influenced by differences in sampling effort and should not be interpreted as direct estimates of regional coral abundance.
 
 
 ## Spatial Distribution of Coral Survey Locations
@@ -201,7 +201,25 @@ This ArcGIS map illustrated the geographic distribution of 262 unique coral surv
 
 ## Data Source and References
 
-**National Oceanic and Atmospheric Administration (NOAA).** (2021). *National Coral Reef Monitoring Program (NCRMP): U.S. Virgin Islands Coral Demographics Data.*
+### Data Source
+
+**National Centers for Coastal Ocean Science (NCCOS) & Southeast Fisheries Science Center (SEFSC).** (2022). *National Coral Reef Monitoring Program: Assessment of coral reef benthic communities in the U.S. Virgin Islands from 2021-06-14 to 2021-08-13 (NCEI Accession 0270849).* NOAA National Centers for Environmental Information.
+
+[Access Dataset](https://www.ncei.noaa.gov/archive/accession/0270849)
 
 The 2021 NCRMP coral demographics dataset was used for data cleaning, species comparisons, and spatial analysis in R and ArcGIS Pro.
+
+### Scientific References
+
+**Lester, S. E., Rassweiler, A., McCoy, S. J., Dubel, A. K., Donovan, M. K., Miller, M. W., Miller, S. D., Ruttenberg, B. I., Samhouri, J. F., & Hay, M. E.** (2020). *Caribbean reefs of the Anthropocene: Variance in ecosystem metrics indicates bright spots on coral depauperate reefs.* Global Change Biology, 26, 4785–4799.
+
+[Access Scientific Paper](https://doi.org/10.1111/gcb.15253)
+
+**Miller, J., Muller, E., Rogers, C., Waara, R., Atkinson, A., Whelan, K. R. T., Patterson, M., & Witcher, B.** (2009). *Coral disease following massive bleaching in 2005 causes 60% decline in coral cover on reefs in the US Virgin Islands.* Coral Reefs, 28, 925–937.
+
+[Access Scientific Paper](https://doi.org/10.1007/s00338-009-0531-7)
+
+**Tsounis, G., & Edmunds, P. J.** (2017). *Three decades of coral reef community dynamics in St. John, USVI: A contrast of scleractinians and octocorals.* Ecosphere, 8(1), e01646.
+
+[Access Scientific Paper](https://doi.org/10.1002/ecs2.1646)
 
