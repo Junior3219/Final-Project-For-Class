@@ -191,7 +191,7 @@ To examine the geographic distribution of coral survey observations, a map was c
 
 
 
-![Spatial distribution of 2021 NOAA NCRMP coral survey locations in the U.S. Virgin Islands.](images/Coral%20Survey%20Locations%20Layout.png){#fig-coral-map fig-align="center" width="100%"}
+![Spatial distribution of 2021 NOAA NCRMP coral survey locations in the U.S. Virgin Islands.](images/Coral%20Survey%20Locations%20Layout.jpg){#fig-coral-map fig-align="center" width="100%"}
 
 ## Conclusion
 
